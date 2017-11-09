@@ -50,11 +50,31 @@
  * 
  * @param MapConnections
  * @text List of connections
+ * @desc A list where all map connections are defined.
  * @type struct<MapConnection>[]
  * @default []
  * 
+ * @param MakeStep
+ * @text Make fake step
+ * @desc Simulates an step just before the transfer occurs, making more seamless the player transition between the maps. Very recommended to leave this on.
+ * @type boolean
+ * @default true
+ * 
+ * @param FadeType
+ * @text Fade type
+ * @desc How to fade the transition?
+ * @type select
+ * @option None
+ * @value 2
+ * @option Black
+ * @value 0
+ * @option White
+ * @value 1
+ * @default 2
+ * 
  * @param AllwaysScrollingMaps
- * @text A list of map ids where the camera will always be centered on the player, no matter map boundaries
+ * @text Centered on player maps
+ * @desc A list of map ids where the camera will always be centered on the player, not taking in account any map boundaries
  * @type number[]
  * @min 0
  * @default []
@@ -71,6 +91,8 @@ var cnInfoJson=JSON.parse(cnInfo);
 var finalJsonInfo=[];
 var alwaysScrollMaps = String(parameters['AllwaysScrollingMaps'] || '[]');
 var jsonAlwScrMaps=JSON.parse(alwaysScrollMaps);
+var useFakeStep = parameters['MakeStep']=="true";
+var fadeToUse = Number(parameters['FadeType'] || 2);
 cnInfoJson.forEach(function(each){
     finalJsonInfo.push(JSON.parse(each));
 });
@@ -85,11 +107,13 @@ cnInfoJson.forEach(function(each){
 $ConnectedMaps = {
     connections:finalJsonInfo,
     outOfBoundsScrollMaps:jsonAlwScrMaps,
+    fakeStep:useFakeStep,
+    fadeType:fadeToUse,
     connectedDataMaps:[]
 };
 
 //It should also allow a mixed scrolling configuration (where oobsmaps doesnt contain a connected map and it scrolls as usual unless when going to a connected side)
-//but because it made extrange camera jumps, all connected maps are automatically added to oobsmaps.
+//but because it made extrange camera jumps, all connected maps are automatically added to oobsmaps. Maybe continue with this idea later?
 $ConnectedMaps.connections.map(function(each){
     if(!$ConnectedMaps.outOfBoundsScrollMaps.contains(each.MapA)){
         $ConnectedMaps.outOfBoundsScrollMaps.push(each.MapA)
@@ -130,9 +154,6 @@ $ConnectedMaps.loadMapData = function(mapId) {
                 }
             });
         }
-        
-    } else {
-        // this.makeEmptyMap();
     }
 };
 $ConnectedMaps.loadDataFile = function(name, src) {
@@ -207,7 +228,7 @@ Game_Player.prototype.update = function(sceneActive) {
         if(!this.waitingForConnectedMapEdgeTransfer){
             this.connectedMapEdgeTransferUpdate();
         }else if(this.connectedMapEdgeTransferInfo!=null){
-            this.reserveTransfer(this.connectedMapEdgeTransferInfo.destMId, this.connectedMapEdgeTransferInfo.destX, this.connectedMapEdgeTransferInfo.destY, this.connectedMapEdgeTransferInfo.pDir, 2);
+            this.reserveTransfer(this.connectedMapEdgeTransferInfo.destMId, this.connectedMapEdgeTransferInfo.destX, this.connectedMapEdgeTransferInfo.destY, this.connectedMapEdgeTransferInfo.pDir, $ConnectedMaps.fadeType);
             this.connectedMapEdgeTransferInfo=null;
             this.waitingForConnectedMapEdgeTransfer=false;
             $gameTemp.clearDestination();
@@ -334,16 +355,18 @@ Game_Player.prototype.connectedMapEdgeTransfer = function(connectedMapInfosInDir
                 destX+=(connectedMapInfosInDirection[0].TileA-1);
             }
         }
-
-        this.setDirection(pDir);
-        this._x = $gameMap.roundXWithDirection(this._x, pDir);
-        this._y = $gameMap.roundYWithDirection(this._y, pDir);
-        this._realX = $gameMap.xWithDirection(this._x, this.reverseDir(pDir));
-        this._realY = $gameMap.yWithDirection(this._y, this.reverseDir(pDir));
-        this.increaseSteps();
+        //The following lines force the player to go an step ahead to make the
+        //transition more "seamless"
+        if($ConnectedMaps.fakeStep){
+            this.setDirection(pDir);
+            this._x = $gameMap.roundXWithDirection(this._x, pDir);
+            this._y = $gameMap.roundYWithDirection(this._y, pDir);
+            this._realX = $gameMap.xWithDirection(this._x, this.reverseDir(pDir));
+            this._realY = $gameMap.yWithDirection(this._y, this.reverseDir(pDir));
+            this.increaseSteps();
+        }
         this.waitingForConnectedMapEdgeTransfer=true;
-        this.connectedMapEdgeTransferInfo={destMId:destMId, destX:destX, destY:destY, pDir:pDir};
-        
+        this.connectedMapEdgeTransferInfo={destMId:destMId, destX:destX, destY:destY, pDir:pDir}; 
     }
 };
 
@@ -495,17 +518,7 @@ Spriteset_Map.prototype.update = function() {
     this.updateWeather();
 };
 
-Spriteset_Map.prototype.clearOldConnectedTilemaps = function(){
-    for (var oldCon in this._connectedTilemaps) {
-        oldCon.lowerZLayer.clear();
-        oldCon.upperZLayer.clear();
-        oldCon = null;
-    }
-    this._connectedTilemaps=[];
-    this._connectedTilesets=[];
-};
 Spriteset_Map.prototype.createConnectedTilemaps = function() {
-    //this.clearOldConnectedTilemaps();
     this._connectedTilemaps=[];
     this._connectedTilesets=[];
     var connectedMapInfos=$ConnectedMaps.getConnectedMapsInfo($ConnectedMaps._mapId);
