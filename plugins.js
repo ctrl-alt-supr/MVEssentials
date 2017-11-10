@@ -12,5 +12,5 @@ var $plugins =
 {"name":"PBAnimation","status":true,"description":"Battle animation classes for Pokemon Essentials MV.","parameters":{"CategoryGeneric":"------"}},
 {"name":"PBAnimationEditor","status":true,"description":"Battle animation editor for Pokemon Essentials MV.","parameters":{"CategoryGeneric":"------"}},
 {"name":"PBSceneBattle","status":true,"description":"","parameters":{}},
-{"name":"PBField","status":true,"description":"Contains functions, classes and settings relative to most of the things happening in the overworld","parameters":{"CategoryMapNameWindow":"","MapNameWindowAnimationType":"1","MapNameWindowAnimationSpeed":"10.00","MapNameWindowShowDuration":"150"}}
+{"name":"PBField","status":true,"description":"Contains functions, classes and settings relative to most of the things happening in the overworld","parameters":{"CategoryMapNameWindow":"","MapNameWindowAnimationType":"2","MapNameWindowAnimationSpeed":"2.00","MapNameWindowShowDuration":"150"}}
 ];

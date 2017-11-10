@@ -1,5 +1,6 @@
 /*:
  * @plugindesc Contains functions, classes and settings relative to most of the things happening in the overworld
+ * @author ctrl.alt.supr (git.ctrl.alt.supr@gmail.com)
  * 
  * @help This plugin does not provide plugin commands.
  * 

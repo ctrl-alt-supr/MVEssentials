@@ -1,6 +1,6 @@
 /*:
  * @plugindesc Battle animation editor for Pokemon Essentials MV.
- * @author MVEssentials
+ * @author ctrl.alt.supr (git.ctrl.alt.supr@gmail.com)
  *
  * @help 
  *

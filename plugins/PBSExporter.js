@@ -1,6 +1,6 @@
 /*:
  * @plugindesc Export old RPMXP Essentials PBS files as RPMMV Essentials compatible pbs.json files.
- * @author MVEssentials
+ * @author ctrl.alt.supr (git.ctrl.alt.supr@gmail.com)
  *
  * @help Make sure to keep this plugin disabled on release!! This plugin does not provide plugin commands.
  *

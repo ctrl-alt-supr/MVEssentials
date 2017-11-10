@@ -34,7 +34,7 @@
  */
 /*:
  * @plugindesc Emulates seamless interconected maps. 
- * 
+ * @author ctrl.alt.supr (git.ctrl.alt.supr@gmail.com)
  * @help This plugin does not provide plugin commands.
  *
  * == To connect two maps: ==

@@ -146,7 +146,7 @@
  */
 /*:
  * @plugindesc Main configuration settings for Pokemon Essentials MV.
- * @author MVEssentials
+ * @author ctrl.alt.supr (git.ctrl.alt.supr@gmail.com)
  *
  * @help This plugin must be placer over all other Pokemon Essentials MV script files.
  *
