@@ -109,7 +109,8 @@ $ConnectedMaps = {
     outOfBoundsScrollMaps:jsonAlwScrMaps,
     fakeStep:useFakeStep,
     fadeType:fadeToUse,
-    connectedDataMaps:[]
+    connectedDataMaps:{},
+    dataMapCache:{},
 };
 
 //It should also allow a mixed scrolling configuration (where oobsmaps doesnt contain a connected map and it scrolls as usual unless when going to a connected side)
@@ -134,7 +135,12 @@ $ConnectedMaps.getConnectedMapsInfo=function(mapId){
 
 $ConnectedMaps.loadMapData = function(mapId) {
     var oldConectedDataMaps=$ConnectedMaps.connectedDataMaps;
-    $ConnectedMaps.connectedDataMaps=[];
+    for (var mId in $ConnectedMaps.connectedDataMaps) {
+        if ($ConnectedMaps.connectedDataMaps.hasOwnProperty(mId)) {
+            $ConnectedMaps.dataMapCache[mId]=$ConnectedMaps.connectedDataMaps[mId]
+        }
+    }
+    $ConnectedMaps.connectedDataMaps={};
     if (mapId > 0) {
         this._mapId=mapId;
         var connectedMapInfos=$ConnectedMaps.getConnectedMapsInfo(mapId);
@@ -144,12 +150,12 @@ $ConnectedMaps.loadMapData = function(mapId) {
             });
             connectedMapIds.forEach(function(each){
                 if(Number(each)>0){
-                    if(oldConectedDataMaps["MAP_"+each]==undefined || oldConectedDataMaps["MAP_"+each]==null){
+                    if($ConnectedMaps.dataMapCache["MAP_"+each]==undefined || $ConnectedMaps.dataMapCache["MAP_"+each]==null){
                         var filename = 'Map%1.json'.format(Number(each).padZero(3));
                         $ConnectedMaps._mapLoader = ResourceHandler.createLoader('data/' + filename, $ConnectedMaps.loadDataFile.bind($ConnectedMaps, 'MAP_'+each, filename));
                         $ConnectedMaps.loadDataFile('MAP_'+each, filename);
                     }else{
-                        $ConnectedMaps.connectedDataMaps['MAP_'+each]=oldConectedDataMaps["MAP_"+each];
+                        $ConnectedMaps.connectedDataMaps['MAP_'+each]=$ConnectedMaps.dataMapCache["MAP_"+each];
                     }
                 }
             });
@@ -194,14 +200,19 @@ $ConnectedMaps.isMapLoaded = function() {
 // We override some DataManager methods to take in account connected maps while loading map data.
 DataManager.loadMapData = function(mapId) {
     if (mapId > 0) {
+        if($gameMap){
+            $ConnectedMaps.dataMapCache["MAP_"+$gameMap.mapId()]=$dataMap;
+        }
         //If the new map is connected to the current one, we can use the data that is already loaded for the connected map instead of reading the file
         //again, what can save us from some extra loading times.
-        if($ConnectedMaps.connectedDataMaps["MAP_"+mapId]==undefined || $ConnectedMaps.connectedDataMaps["MAP_"+mapId]==null){
+        if($ConnectedMaps.connectedDataMaps["MAP_"+mapId]!=undefined && $ConnectedMaps.connectedDataMaps["MAP_"+mapId]!=null){
+            $dataMap=$ConnectedMaps.connectedDataMaps["MAP_"+mapId];
+        }else if($ConnectedMaps.dataMapCache["MAP_"+mapId]!=undefined && $ConnectedMaps.dataMapCache["MAP_"+mapId]!=null ){
+            $dataMap=$ConnectedMaps.dataMapCache["MAP_"+mapId];
+        }else{
             var filename = 'Map%1.json'.format(mapId.padZero(3));
             this._mapLoader = ResourceHandler.createLoader('data/' + filename, this.loadDataFile.bind(this, '$dataMap', filename));
             this.loadDataFile('$dataMap', filename);
-        }else{
-            $dataMap=$ConnectedMaps.connectedDataMaps["MAP_"+mapId];
         }
         $ConnectedMaps.loadMapData(mapId);
     } else {
