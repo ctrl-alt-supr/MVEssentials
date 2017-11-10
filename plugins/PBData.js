@@ -1,4 +1,17 @@
 
+/*:
+ * @plugindesc Objects and classes used to work with data from PBS files
+ * @author ctrl.alt.supr (git.ctrl.alt.supr@gmail.com)
+ *
+ * @help .
+ *
+ * @param CategoryGeneric
+ * @text General settings
+ * @default ------
+ * 
+ * 
+ */
+
 //-----------------------------------------------------------------------------
 // PBSpecies
 //
