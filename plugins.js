@@ -11,5 +11,6 @@ var $plugins =
 {"name":"PBScenePauseMenu","status":true,"description":"Pause menu for Pokemon Essentials MV.","parameters":{"CategoryGeneric":"------"}},
 {"name":"PBAnimation","status":true,"description":"Battle animation classes for Pokemon Essentials MV.","parameters":{"CategoryGeneric":"------"}},
 {"name":"PBAnimationEditor","status":true,"description":"Battle animation editor for Pokemon Essentials MV.","parameters":{"CategoryGeneric":"------"}},
-{"name":"PBSceneBattle","status":true,"description":"","parameters":{}}
+{"name":"PBSceneBattle","status":true,"description":"","parameters":{}},
+{"name":"PBMap","status":true,"description":".","parameters":{"AnimationType":"1"}}
 ];
