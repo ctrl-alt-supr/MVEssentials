@@ -1,2 +1,2 @@
 # MVEssentials
-An unofficial port of essentials for MV
+An unofficial work in progress port of essentials for MV
