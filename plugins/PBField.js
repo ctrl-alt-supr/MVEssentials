@@ -1,3 +1,150 @@
+/*~struct~PointInMap:
+ * @param MapID
+ * @text Map ID
+ * @desc ID of the map
+ * @type number
+ * @min 1
+ * @default 1
+ * 
+ * @param X
+ * @text Position X
+ * @desc Horizontal position
+ * @type number
+ * @min 1
+ * @default 1
+ * 
+ * @param Y
+ * @text Position Y
+ * @desc Vertical position
+ * @type number
+ * @min 1
+ * @default 1
+ * 
+ * 
+*/
+
+/*~struct~WeatherConfig:
+ * @param WeatherType
+ * @text Weather type
+ * @desc Type of the weather for this entry
+ * @type select
+ * @option None (Default)
+ * @value 0
+ * @option Rain
+ * @value 1
+ * @option Storm
+ * @value 2
+ * @option Snow
+ * @value 3
+ * @option Sandstorm
+ * @value 4
+ * @option Sunny
+ * @value 5
+ * @default 0
+ * 
+ * @param Chance
+ * @text Chance of this weather type
+ * @desc Horizontal position
+ * @type number
+ * @min 1
+ * @max 100
+ * @default 100
+ * 
+*/
+
+/*~struct~MapMeta:
+ * @param MapID
+ * @text Map ID
+ * @desc ID of the map this entry refers to
+ * @type number
+ * @min 1
+ * @default 1
+ * 
+ * @param Outdoor
+ * @text Is outdoor?
+ * @desc Does this map represent an outdoor map?
+ * @type boolean
+ * @default true
+ * 
+ * @param Bycicle
+ * @text Can use bycicle
+ * @desc Can bycicles be used in the map with this id?
+ * @type select
+ * @option Default (Yes if outdoor)
+ * @value -1
+ * @option Yes
+ * @value 1
+ * @option No
+ * @value 0
+ * @default -1
+ * 
+ * @param BycicleAlways
+ * @text Always bike?
+ * @desc Does this map force the player to mount?
+ * @type boolean
+ * @default false
+ * 
+ * @param HealingSpot
+ * @text Healing spot
+ * @desc Healing spot to set when entering this map if any. Supr over this entry to clear the value.
+ * @type struct<PointInMap>
+ * 
+ * @param ShowArea
+ * @text Show name?
+ * @desc Show area name window on this map?
+ * @type boolean
+ * @default true
+ * 
+ * @param Weather
+ * @text Weather
+ * @type struct<WeatherConfig>[]
+ * 
+ * @param DarkMap
+ * @text Is dark?
+ * @desc Is this a dark map? (cave that needs Flash...)
+ * @type boolean
+ * @default false
+ * 
+ * @param DiveMap
+ * @text Dive map ID
+ * @desc ID of the map diving in this map teleports you to. 0 for none.
+ * @type number
+ * @min 0
+ * @default 0
+ * 
+ * @param SafariMap
+ * @text Is safari?
+ * @desc Is this map part of the safari zone?
+ * @type boolean
+ * @default false
+ * 
+ * @param BattleBack
+ * @text Battle back
+ * @type file
+ * @dir img/
+ * 
+ * @param WildBattleBGM
+ * @text Wild battle sound
+ * @type file
+ * @dir audio/bgm/
+ * 
+ * @param TrainerBattleBGM
+ * @text Trainer battle sound
+ * @type file
+ * @dir audio/bgm/
+ * 
+ * @param WildVictoryME
+ * @text Wild victory sound
+ * @type file
+ * @dir audio/me/
+ * 
+ * @param TrainerVictoryME
+ * @text Trainer victory sound
+ * @type file
+ * @dir audio/me/
+ * 
+ * 
+ */
 /*:
  * @plugindesc Contains functions, classes and settings relative to most of the things happening in the overworld
  * @author ctrl.alt.supr (git.ctrl.alt.supr@gmail.com)
@@ -38,6 +185,100 @@
  * @default 150
  * @min 60
  * @parent CategoryMapNameWindow
+ * 
+ * @param CategoryMechanics
+ * @text Mechanics
+ * 
+ * @param PoisonInField
+ * @text Poison affects
+ * @desc Whether poisoned Pokémon will lose HP while walking around in the field.
+ * @type boolean
+ * @default true
+ * @parent CategoryMechanics
+ * 
+ * @param PoisonFaintInField
+ * @text Poison faints
+ * @desc Whether poisoned Pokémon will faint while walking around in the field (true), or survive the poisoning with 1HP (false).
+ * @type boolean
+ * @default true
+ * @parent CategoryMechanics
+ * 
+ * @param FishingAutoHook
+ * @text Fishing automatic
+ * @desc Whether fishing automatically hooks the Pokémon (if false, there is a reaction test first).
+ * @type boolean
+ * @default true
+ * @parent CategoryMechanics
+ * 
+ * @param DivingSurfaceAnywhere
+ * @text Surface diving anywhere
+ * @desc Whether the player can surface from anywhere while diving (true), or only in spots where they could dive down from above (false).
+ * @type boolean
+ * @default false
+ * @parent CategoryMechanics
+ * 
+ * @param EnableShading
+ * @text Daytime shading
+ * @desc Whether outdoor maps should be shaded according to the time of day.
+ * @type boolean
+ * @default true
+ * @parent CategoryMechanics
+ * 
+ * @param CategoryMeta
+ * @text Metadata
+ * 
+ * @param CatPlayerMeta
+ * @text Player metadata
+ * @parent CategoryMeta
+ * 
+ * @param Home
+ * @text Home position
+ * @desc Place where the player blackouts to when no pokecenter visited yet.
+ * @type struct<PointInMap>
+ * @parent CatPlayerMeta
+ * @default {"MapID":"1","X":"1","Y":"1"}
+ * 
+ * @param BycicleBGM
+ * @text Bycicle sound
+ * @type file
+ * @dir audio/bgm/
+ * @parent CatPlayerMeta
+ * 
+ * @param SurfBGM
+ * @text Surf sound
+ * @type file
+ * @dir audio/bgm/
+ * @parent CatPlayerMeta
+ * 
+ * @param WildBattleBGM
+ * @text Wild battle sound
+ * @type file
+ * @dir audio/bgm/
+ * @parent CatPlayerMeta
+ * 
+ * @param TrainerBattleBGM
+ * @text Trainer battle sound
+ * @type file
+ * @dir audio/bgm/
+ * @parent CatPlayerMeta
+ * 
+ * @param WildVictoryME
+ * @text Wild victory sound
+ * @type file
+ * @dir audio/me/
+ * @parent CatPlayerMeta
+ * 
+ * @param TrainerVictoryME
+ * @text Trainer victory sound
+ * @type file
+ * @dir audio/me/
+ * @parent CatPlayerMeta
+ * 
+ * @param MapMetadata
+ * @text Map metadata
+ * @desc Misc values for each map
+ * @type struct<MapMeta>[]
+ * @parent CategoryMeta
  * 
  * 
  */
@@ -155,6 +396,9 @@ PBWindowMapName.prototype.open = function() {
         this.contentsOpacity = 255;
     }
 };
+
+
+
 
 PBWindowMapName.prototype.close = function() {
     this._showCount = 0;

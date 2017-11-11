@@ -121,6 +121,43 @@ PBSExporter={
                 Incense:"incense"
             }
         },
+        metadata:{
+            type:"metadata",
+            columns:[
+                {
+                    PlayerA:"player_0",
+                    PlayerB:"player_1",
+                    PlayerC:"player_2",
+                    PlayerD:"player_3",
+                    PlayerE:"player_4",
+                    PlayerF:"player_5",
+                    PlayerG:"player_6",
+                    Home:"home",
+                    BicycleBGM:"bycicle_bgm",
+                    SurfBGM:"surf_bgm",
+                    WildBattleBGM:"wild_battle_bgm",
+                    TrainerBattleBGM:"trainer_battle_bgm",
+                    WildVictoryME:"wild_victory_me",
+                    TrainerVictoryME:"trainer_victory_me",
+                },{
+                    Outdoor:"outdoor",
+                    Bicycle:"bicycle",
+                    BicycleAlways:"bicycle_always",
+                    HealingSpot:"healing_spot",
+                    MapPosition:"map_position",
+                    ShowArea:"show_name",
+                    Weather:"weather",
+                    DarkMap:"dark",
+                    DiveMap:"dive_map",
+                    SafariMap:"safari",
+                    BattleBack:"battleback",
+                    WildBattleBGM:"wild_battle_bgm",
+                    TrainerBattleBGM:"trainer_battle_bgm",
+                    WildVictoryME:"wild_victory_me",
+                    TrainerVictoryME:"trainer_victory_me",
+                }]
+            }
+        },
         trainers:{
             type:"trainers",
             columns:[

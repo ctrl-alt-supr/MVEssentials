@@ -200,45 +200,6 @@
  * @max 65536
  * @parent CategoryPoke
  * 
- * @param CategoryEnv
- * @text Enviromental settings
- * @default ------
- *
- * @param PoisonInField
- * @text Poison ooc
- * @desc Whether poisoned Pokémon will lose HP while walking around in the field.
- * @type boolean
- * @default true
- * @parent CategoryEnv
- * 
- * @param PoisonFaintInField
- * @text Poison faints ooc
- * @desc Whether poisoned Pokémon will faint while walking around in the field (true), or survive the poisoning with 1HP (false).
- * @type boolean
- * @default true
- * @parent CategoryEnv
- * 
- * @param FishingAutoHook
- * @text Fishing automatic
- * @desc Whether fishing automatically hooks the Pokémon (if false, there is a reaction test first).
- * @type boolean
- * @default true
- * @parent CategoryEnv
- * 
- * @param DivingSurfaceAnywhere
- * @text Surface diving anywhere
- * @desc Whether the player can surface from anywhere while diving (true), or only in spots where they could dive down from above (false).
- * @type boolean
- * @default false
- * @parent CategoryEnv
- * 
- * @param EnableShading
- * @text Daytime shading
- * @desc Whether outdoor maps should be shaded according to the time of day.
- * @type boolean
- * @default true
- * @parent CategoryEnv
- *  
  * @param CategoryStorage
  * @text Storage settings
  * @default ------
