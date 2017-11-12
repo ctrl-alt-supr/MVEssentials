@@ -629,6 +629,50 @@ Scene_Boot.prototype.create = function() {
 
 
 //-----------------------------------------------------------------------------
+// PBEnviroments
+//
+// An structure containing battle enviroments 
+var PBEnviroments={
+    enum:{
+        None:0,
+        Grass:1,
+        TallGrass:2,
+        MovingWater:3,
+        StillWater:4,
+        Underwater:5,
+        Cave:6,
+        Rock:7,
+        Sand:8,
+        Forest:9,
+        Snow:10,
+        Volcano:11,
+        Graveyard:12,
+        Sky:13,
+        Space:14
+
+    },
+    getName:function(id){
+        var aDev=null;
+        aDev=Object.keys(PBEnviroments.enum).filter(function(each){
+            return PBEnviroments.enum[each]==id;
+        });
+        if(aDev.length==1){
+            aDev=aDev[0];
+        }
+        return aDev;
+        
+    },
+    getId:function(name){
+        var aDev=null;
+        aDev=PBEnviroments.enum[name];
+        return aDev;
+    },
+    getCount:function(){
+        return Object.keys(PBEnviroments.enum).length;
+    }
+}
+
+//-----------------------------------------------------------------------------
 // PBDataManager
 //
 // The static class that manages the database and game objects.

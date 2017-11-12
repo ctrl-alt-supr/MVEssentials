@@ -4,7 +4,7 @@
  * @desc The amount of Red
  * @type number
  * @default 0
- * @min 1
+ * @min -255
  * @max 255
  * 
  * @param green
@@ -12,7 +12,7 @@
  * @desc The amount of Green
  * @type number
  * @default 0
- * @min 1
+ * @min -255
  * @max 255
  * 
  * @param blue
@@ -20,7 +20,7 @@
  * @desc The amount of Blue
  * @type number
  * @default 0
- * @min 1
+ * @min -255
  * @max 255
  * 
  * @param gray
@@ -28,7 +28,7 @@
  * @desc The amount of Gray
  * @type number
  * @default 0
- * @min 1
+ * @min -255
  * @max 255
  * 
  */
