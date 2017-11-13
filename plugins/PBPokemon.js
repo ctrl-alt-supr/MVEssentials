@@ -133,7 +133,7 @@ PBPokemon.factory={
         with_moves:true
     },
     _generateId:function(){
-        var toRet=Math.floor(Math.random() * 256);
+        var toRet=0;
         toRet=Math.floor(Math.random() * 256);
         toRet|=Math.floor(Math.random() * 256)<<8;
         toRet|=Math.floor(Math.random() * 256)<<16;

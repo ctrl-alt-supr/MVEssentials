@@ -20,8 +20,11 @@ PBTrainer.prototype.initialize = function() {
     this._ownedPokemon=[];
     this._party=[];
 };
+PBTrainer.prototype.trainerTypeName=function(){
+    return new PBTrainerType(this.trainerType()).name();
+}
 PBTrainer.prototype.fullName=function(){
-    
+    return this.trainerTypeName()+" "+this.name();
 };
 PBTrainer.prototype.name=function(){
     return this._name;
@@ -29,11 +32,32 @@ PBTrainer.prototype.name=function(){
 PBTrainer.prototype.id=function(){
     return this._id;
 };
-PBTrainer.prototype.publicId=function(){
-    
+//Trainer card visible id part
+PBTrainer.prototype.publicId=function(overrideId){
+    return (overrideId ? overrideId&0xFFFF : this.id()&0xFFFF);
 };
-PBTrainer.prototype.secretId=function(){
-    
+//Non visible id part
+PBTrainer.prototype.secretId=function(overrideId){
+    return (overrideId ? overrideId>>16 : this.id()>>16)
+};
+PBTrainer.prototype.getForeignId=function(){
+    var choosenId=0;
+    do{
+        choosenId=PBTrainer.factory._generateId();
+    }while(choosenId==this.id());
+    return choosenId;
+};
+//Money earned by defeating this trainer
+PBTrainer.prototype.moneyEarned=function(){
+    return new PBTrainerType(this.trainerType()).money();
+};
+//Skill level for AI
+PBTrainer.prototype.skill=function(){
+    return new PBTrainerType(this.trainerType()).skill_level();
+};
+//Skill code for AI
+PBTrainer.prototype.skill=function(){
+    return new PBTrainerType(this.trainerType()).skill_code();
 };
 PBTrainer.prototype.trainerType=function(){
     return this._trainerType;
@@ -43,6 +67,40 @@ PBTrainer.prototype.gender=function(){
 };
 PBTrainer.prototype.money=function(){
     return this._money;
+};
+PBTrainer.prototype.isMale=function(){
+    return this._gender==0;
+};
+PBTrainer.prototype.isFemale=function(){
+    return this._gender==1;
+};
+PBTrainer.prototype.pokemonParty=function(){
+    return this._party.filter(function(each){
+        return !each.isEgg();
+    });
+};
+PBTrainer.prototype.pokemonCount=function(){
+    return this.pokemonParty().length;
+};
+PBTrainer.prototype.ablePokemonParty=function(){
+    return this._party.filter(function(each){
+        return !each.isEgg() && each.hp>0;
+    });
+};
+PBTrainer.prototype.ablePokemonCount=function(){
+    return this.ablePokemonParty().length;
+};
+PBTrainer.prototype.hasSeen=function(){
+    
+};
+PBTrainer.prototype.hasOwned=function(){
+
+};
+PBTrainer.prototype.setSeen=function(){
+    
+};
+PBTrainer.prototype.setOwned=function(){
+
 };
 PBTrainer.prototype.badges=function(region, badge){
     if(region==undefined || region==null || region==0){
@@ -61,29 +119,42 @@ PBTrainer.prototype.badges=function(region, badge){
     return null;
 };
 
-
-function PBTrainerPlayer() {
-    this.initialize.apply(this, arguments);
+PBTrainer.factory={
+    defaultFactoryOptions:{
+        name:"",
+        trainerType:1,
+        is_player:false
+    },
+    _generateId:function(){
+        var toRet=0;
+        toRet=Math.floor(Math.random() * 256);
+        toRet|=Math.floor(Math.random() * 256)<<8;
+        toRet|=Math.floor(Math.random() * 256)<<16;
+        toRet|=Math.floor(Math.random() * 256)<<24;
+        return toRet;
+    },
+    new:function(factoryOpts){
+        var opts=PBTrainer.factory.defaultFactoryOptions;
+        if(factoryOpts!=undefined && factoryOpts!=null){
+            for (var option in factoryOpts) {
+                if (factoryOpts.hasOwnProperty(option) && opts.hasOwnProperty(option)) {
+                    opts[option]=factoryOpts[option];
+                }
+            }
+        }
+        var toRet=new PBTrainer();
+        toRet._name=opts.name;
+        toRet._trainerType=opts.trainerType;
+        toRet._id=PBTrainer.factory._generateId();
+        return toRet;
+    },
+    fromJSON:function(elJSON){
+        var toRet=new PBTrainer();
+        for (var jsonProp in elJSON) {
+            if (elJSON.hasOwnProperty(jsonProp)) {
+                toRet[jsonProp]=elJSON[jsonProp];
+            }
+        }
+        return toRet;
+    }
 }
-//Shared container for overrided functions.
-PBTrainerPlayer.overrides={};
-PBTrainerPlayer.prototype = Object.create(PBTrainer.prototype);
-PBTrainerPlayer.prototype.constructor = PBTrainerPlayer;
-
-PBTrainerPlayer.prototype.initialize = function() {
-    PBTrainer.prototype.initialize.call(this);
-    
-};
-
-function PBTrainerNPC() {
-    this.initialize.apply(this, arguments);
-}
-//Shared container for overrided functions.
-PBTrainerNPC.overrides={};
-PBTrainerNPC.prototype = Object.create(PBTrainer.prototype);
-PBTrainerNPC.prototype.constructor = PBTrainerNPC;
-
-PBTrainerNPC.prototype.initialize = function() {
-    PBTrainer.prototype.initialize.call(this);
-    
-};
