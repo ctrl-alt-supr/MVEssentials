@@ -1,5 +1,5 @@
 PBExperience={
-    table=[
+    table:[
     // Medium (Medium Fast)
         -1,0,8,27,64,125,216,343,512,729,
         1000,1331,1728,2197,2744,3375,4096,4913,5832,6859,
@@ -77,10 +77,10 @@ PBExperience={
         if(level>100){
             if(growth==0){
                 //medium/medium fast
-                return level**3 
+                return Math.pow(level,3);
             }else if(growth==1){
                 //erratic 600000 EXP at level 100
-                return Math.floor((level**3)*((level*6/10)/(100*1.0)))
+                return Math.floor(Math.pow(level,3)*((level*6/10)/(100*1.0)))
             }else if(growth==2){
                 //fluctuating 1640000 EXP at level 100
                 var rate = 82
@@ -88,16 +88,16 @@ PBExperience={
                 if(rate<40){
                     rate=40;
                 }
-                return Math.floor((level**3)*((level*rate/100)/50.0))
+                return Math.floor(Math.pow(level,3)*((level*rate/100)/50.0))
             }else if(growth==3){
                 //parabolic/medium slow 1640000 EXP at level 100
-                return (6*(level**3)/5)-15*(level**2)+100*level-140
+                return (6*Math.pow(level,3)/5)-15*Math.pow(level,2)+100*level-140
             }else if(growth==4){
                 //Fast
-                return Math.floor(4*(level**3)/5)
+                return Math.floor(4*Math.pow(level,3)/5)
             }else if(growth==5){
                 //Slow
-                return Math.floor(5*(level**3)/4)
+                return Math.floor(5*Math.pow(level,3)/4)
             }else{
                 return 0;
             }

@@ -676,6 +676,41 @@ var PBEnviroments={
     }
 }
 
+
+//-----------------------------------------------------------------------------
+// PBEnviroments
+//
+// An structure containing battle enviroments 
+var PBGrowthRates={
+    enum:{
+        Medium:0,
+        Erratic:1,
+        Fluctuating:2,
+        Parabolic:3,
+        Slow:4,
+        Fast:5
+    },
+    getName:function(id){
+        var aDev=null;
+        aDev=Object.keys(PBGrowthRates.enum).filter(function(each){
+            return PBGrowthRates.enum[each]==id;
+        });
+        if(aDev.length==1){
+            aDev=aDev[0];
+        }
+        return aDev;
+        
+    },
+    getId:function(name){
+        var aDev=null;
+        aDev=PBGrowthRates.enum[name];
+        return aDev;
+    },
+    getCount:function(){
+        return Object.keys(PBGrowthRates.enum).length;
+    }
+}
+
 //-----------------------------------------------------------------------------
 // PBDataManager
 //

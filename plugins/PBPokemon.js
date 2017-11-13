@@ -53,15 +53,15 @@ PBPokemon.prototype.initialize = function() {
 
 //Level
 PBPokemon.prototype.level=function(){
-    
+    return this._level;
 }
 PBPokemon.prototype.setLevel=function(tLevel){
     this._level=tLevel;
-    this._exp=PBExperience.getStartExperience(value,this.growthRate()) 
+    this._exp=PBExperience.getStartExperience(this._level,this.growthRate()) 
 }
 
 PBPokemon.prototype.growthRate=function(){
-    return new PBSpecie(this._species).growth_rate();
+    return PBGrowthRates.getId(new PBSpecie(this._species).growth_rate());
 }
 PBPokemon.prototype.baseExp=function(){
     
