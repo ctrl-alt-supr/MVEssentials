@@ -171,18 +171,26 @@ PBPokemon.factory={
         if($gameMap!=undefined && $gameMap!=null){
             toRet._obtainMap=$gameMap.mapId();
             toRet._obtainText=null;
-            toRet._obtainLevel=opts.level;
         }else{
             toRet._obtainMap=0;
             toRet._obtainText=null;
-            toRet._obtainLevel=opts.level;
         }
+        toRet._obtainLevel=opts.level;
         toRet._timeReceived=$PBTime._currentTime;
         toRet._level=opts.level;
         toRet.calcStats();
         toRet._happiness=theSpecies.happiness();
 
 
+        return toRet;
+    },
+    fromJSON:function(elJSON){
+        var toRet=new PBPokemon();
+        for (var jsonProp in elJSON) {
+            if (elJSON.hasOwnProperty(jsonProp)) {
+                toRet[jsonProp]=elJSON[jsonProp];
+            }
+        }
         return toRet;
     }
 }
