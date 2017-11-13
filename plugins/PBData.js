@@ -165,6 +165,10 @@ var PBSpecie=function(theId){
         var data=this._getData();
         return data.habitat || null;
     };
+    this.base_stats=function(){
+        var data=this._getData();
+        return (data.base_stats || "0,0,0,0,0,0").split(",");
+    };
     
 }
 //-----------------------------------------------------------------------------
