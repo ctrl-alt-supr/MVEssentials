@@ -131,7 +131,40 @@ PBExperience={
                 return PBExperience.getExpInternal(level,growth);                
             }
         }
+    },
+    //Adds experience points ensuring that the new total doesn't exceed the maximum Exp. Points for the given growth rate.
+    addExperience:function(currentExp, expGain, growth){
+        if(growth>=6 || growth<0){
+            return 0;
+        }else{
+            var exp= currentExp+expGain;
+            var maxExp=PBExperience.getMaxExperience(growth);
+            if(exp>maxExp){
+                exp=maxExp;
+            }
+            return exp;
+        }
+    },
+    //Calculates a level given the number of Exp Points and growth rate.
+    getLevelFromExp:function(exp, growth){
+        if(growth>=6 || growth<0){
+            return 0;
+        }else{
+            var maxExp=PBExperience.getMaxExperience(growth);
+            if(exp>maxExp){
+                exp=maxExp;
+            }
+            var maxLvl=PBExperience.maximunLevel();
+            for(var i=0; i<=maxLvl; i++){
+                currentExp = PBExperience.getExpInternal(i,growth)
+                if(currentExp==exp){
+                    return i;
+                }else if(exp<currentExp){
+                    return i-1;
+                }
+            }
+            return exp;
+        }
     }
 
-    
 }

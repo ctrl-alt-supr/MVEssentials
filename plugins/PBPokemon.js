@@ -55,11 +55,13 @@ PBPokemon.prototype.initialize = function() {
 PBPokemon.prototype.level=function(){
     
 }
-PBPokemon.prototype.setLevel=function(){
-    
+PBPokemon.prototype.setLevel=function(tLevel){
+    this._level=tLevel;
+    this._exp=PBExperience.getStartExperience(value,this.growthRate()) 
 }
+
 PBPokemon.prototype.growthRate=function(){
-    
+    return new PBSpecie(this._species).growth_rate();
 }
 PBPokemon.prototype.baseExp=function(){
     
@@ -177,7 +179,7 @@ PBPokemon.factory={
         }
         toRet._obtainLevel=opts.level;
         toRet._timeReceived=$PBTime._currentTime;
-        toRet._level=opts.level;
+        toRet.setLevel(opts.level);
         toRet.calcStats();
         toRet._happiness=theSpecies.happiness();
 
