@@ -298,10 +298,10 @@ var PBMoves={
 }
 
 //-----------------------------------------------------------------------------
-// PBItem
+// PBMoveData
 //
 // An class representing a move 
-var PBMove=function(theId){
+var PBMoveData=function(theId){
     this._id=theId;
     this._data=null;
     this._getData=function(noCache){
