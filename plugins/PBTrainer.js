@@ -266,24 +266,24 @@ PBTrainer.factory={
         return toRet;
     }
 }
-
-var setupPlayer=function(name, gender){
-
+var setPlayerCharacter=function(playerCharacterId){
+    
 }
-def pbTrainerName(name=nil,outfit=0)
-pbChangePlayer(0) if $PokemonGlobal.playerID<0
-trainertype = pbGetPlayerTrainerType
-trname = name
-$Trainer = PokeBattle_Trainer.new(trname,trainertype)
-$Trainer.outfit = outfit
-if trname==nil
-  trname = pbEnterPlayerName(_INTL("Your name?"),0,PLAYERNAMELIMIT)
-  if trname==""
-    gender = pbGetTrainerTypeGender(trainertype) 
-    trname = pbSuggestTrainerName(gender)
-  end
-end
-$Trainer.name = trname
-$PokemonBag = PokemonBag.new
-$PokemonTemp.begunNewGame = true
-end
+var askPlayerName=function(oldName){
+    
+}
+var setupPlayer=function(playerCharacterId, name){
+    window["$Trainer"]=PBTrainer.factory.new({
+        name:name,
+        trainerType:1,
+        is_player:true
+    });
+    if(playerCharacterId!=undefined && playerCharacterId!=null){
+        setPlayerCharacter(playerCharacterId);
+    }else{
+        setPlayerCharacter(0);
+    }
+    if(name==undefined || name==null){
+        askPlayerName();
+    }
+}

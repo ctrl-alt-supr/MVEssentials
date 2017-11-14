@@ -338,6 +338,14 @@ var $PBField={
     }
 };
 
+//Load map metadata into its property
+$PBField.metadata.maps={};
+var mapsJSON = JSON.parse(String(parameters['MapMetadata'] || '[]'));
+for(var i=0;i<mapsJSON.length; i++){
+    var lMet=mapsJSON[i];
+    $PBField.metadata.maps[lMet.MapID]=lMet;
+}
+
 function PBWindowMapName() {
     this.initialize.apply(this, arguments);
 }
