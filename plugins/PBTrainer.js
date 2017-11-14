@@ -1,6 +1,112 @@
+/*~struct~PointInMap:
+ * @param MapID
+ * @text Map ID
+ * @desc ID of the map
+ * @type number
+ * @min 1
+ * @default 1
+ * 
+ * @param X
+ * @text Position X
+ * @desc Horizontal position
+ * @type number
+ * @min 1
+ * @default 1
+ * 
+ * @param Y
+ * @text Position Y
+ * @desc Vertical position
+ * @type number
+ * @min 1
+ * @default 1
+ * 
+ * 
+*/
+/*~struct~PlayerCharacterMeta:
+ * @param TrainerType
+ * @text Trainer type
+ * @desc Trainer type
+ * @type number
+ * @min 1
+ * @default 1
+ * 
+ * @param WalkingCharset
+ * @text Walking charset
+ * @desc Walking charset
+ * @type file
+ * @path img/characters/
+ * 
+ * @param CyclingCharset
+ * @text Cycling charset
+ * @desc Cycling charset
+ * @type file
+ * @path img/characters/
+ * 
+ * @param SurfingCharset
+ * @text Surfing charset
+ * @desc Surfing charset
+ * @type file
+ * @path img/characters/
+ * 
+ * @param RunningCharset
+ * @text Running charset
+ * @desc Running charset
+ * @type file
+ * @path img/characters/
+ * 
+ * @param DivingCharset
+ * @text Diving charset
+ * @desc Diving charset
+ * @type file
+ * @path img/characters/
+ * 
+ * @param FishingCharset
+ * @text Fishing charset
+ * @desc Fishing charset
+ * @type file
+ * @path img/characters/
+ * 
+ * @param FishingSurfingCharset
+ * @text Fishing surfing charset
+ * @desc Fishing surfing charset
+ * @type file
+ * @path img/characters/
+ * 
+ * 
+*/
+/*:
+* @plugindesc Trainer classes and player metadata
+* @author ctrl.alt.supr (git.ctrl.alt.supr@gmail.com)
+*
+* @help .
+*
+* @param CatPlayerMeta
+* @text Player metadata
+*
+* @param PlayableCharacters
+* @text Player characters
+* @type struct<PlayerCharacterMeta>[]
+* @parent CatPlayerMeta 
+*
+* @param Home
+* @text Home position
+* @desc Place where the player blackouts to when no pokecenter visited yet.
+* @type struct<PointInMap>
+* @parent CatPlayerMeta
+* @default {"MapID":"1","X":"1","Y":"1"}
+*
+*/
+
+var parameters = PluginManager.parameters('PBTrainer');
+
 function PBTrainer() {
     this.initialize.apply(this, arguments);
 }
+
+PBTrainer.playerMeta={
+    second:Number(parameters['secondLength'] || '1000'),
+}
+
 //Shared container for overrided functions.
 PBTrainer.overrides={};
 PBTrainer.prototype = Object.create(Object.prototype);
@@ -119,6 +225,8 @@ PBTrainer.prototype.badges=function(region, badge){
     return null;
 };
 
+
+
 PBTrainer.factory={
     defaultFactoryOptions:{
         name:"",
@@ -158,3 +266,24 @@ PBTrainer.factory={
         return toRet;
     }
 }
+
+var setupPlayer=function(name, gender){
+
+}
+def pbTrainerName(name=nil,outfit=0)
+pbChangePlayer(0) if $PokemonGlobal.playerID<0
+trainertype = pbGetPlayerTrainerType
+trname = name
+$Trainer = PokeBattle_Trainer.new(trname,trainertype)
+$Trainer.outfit = outfit
+if trname==nil
+  trname = pbEnterPlayerName(_INTL("Your name?"),0,PLAYERNAMELIMIT)
+  if trname==""
+    gender = pbGetTrainerTypeGender(trainertype) 
+    trname = pbSuggestTrainerName(gender)
+  end
+end
+$Trainer.name = trname
+$PokemonBag = PokemonBag.new
+$PokemonTemp.begunNewGame = true
+end

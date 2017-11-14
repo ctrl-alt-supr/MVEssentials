@@ -227,52 +227,45 @@
  * @param CategoryMeta
  * @text Metadata
  * 
- * @param CatPlayerMeta
- * @text Player metadata
+ * @param CategoryMetaDefault
+ * @text Default metadata
  * @parent CategoryMeta
- * 
- * @param Home
- * @text Home position
- * @desc Place where the player blackouts to when no pokecenter visited yet.
- * @type struct<PointInMap>
- * @parent CatPlayerMeta
- * @default {"MapID":"1","X":"1","Y":"1"}
  * 
  * @param BycicleBGM
  * @text Bycicle sound
  * @type file
  * @dir audio/bgm/
- * @parent CatPlayerMeta
+ * @parent CategoryMetaDefault
  * 
  * @param SurfBGM
  * @text Surf sound
  * @type file
  * @dir audio/bgm/
- * @parent CatPlayerMeta
+ * @parent CategoryMetaDefault
  * 
  * @param WildBattleBGM
  * @text Wild battle sound
  * @type file
  * @dir audio/bgm/
- * @parent CatPlayerMeta
+ * @parent CategoryMetaDefault
  * 
  * @param TrainerBattleBGM
  * @text Trainer battle sound
  * @type file
  * @dir audio/bgm/
- * @parent CatPlayerMeta
+ * @parent CategoryMetaDefault
  * 
  * @param WildVictoryME
  * @text Wild victory sound
  * @type file
  * @dir audio/me/
- * @parent CatPlayerMeta
+ * @parent CategoryMetaDefault
  * 
  * @param TrainerVictoryME
  * @text Trainer victory sound
  * @type file
  * @dir audio/me/
- * @parent CatPlayerMeta
+ * @parent CategoryMetaDefault
  * 
  * @param MapMetadata
  * @text Map metadata

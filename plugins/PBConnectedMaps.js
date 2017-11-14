@@ -113,7 +113,7 @@ $ConnectedMaps = {
     dataMapCache:{},
 };
 
-//It should also allow a mixed scrolling configuration (where oobsmaps doesnt contain a connected map and it scrolls as usual unless when going to a connected side)
+//It was supposed to also allow a mixed scrolling configuration (where oobsmaps doesnt contain a connected map and it scrolls as usual unless when going to a connected side)
 //but because it made extrange camera jumps, all connected maps are automatically added to oobsmaps. Maybe continue with this idea later?
 $ConnectedMaps.connections.map(function(each){
     if(!$ConnectedMaps.outOfBoundsScrollMaps.contains(each.MapA)){
