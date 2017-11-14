@@ -286,6 +286,55 @@ var $PBField={
         AnimationType:Number(parameters['MapNameWindowAnimationType'] || '1'),
         AnimationSpeed:Number(parameters['MapNameWindowAnimationSpeed'] || '2'),
         ShowDuration:Number(parameters['MapNameWindowShowDuration'] || '150')
+    },
+    metadata:{
+        defaults:{
+            BycicleBGM:String(parameters['BycicleBGM'] || ''),
+            SurfBGM:String(parameters['SurfBGM'] || ''),
+            WildBattleBGM:String(parameters['WildBattleBGM'] || ''),
+            TrainerBattleBGM:String(parameters['TrainerBattleBGM'] || ''),
+            WildVictoryME:String(parameters['WildVictoryME'] || ''),
+            TrainerVictoryME:String(parameters['TrainerVictoryME'] || '')
+        },
+        maps:{
+
+        }
+    },
+    terrainTags:{
+        None:0,
+        Ledge:1,
+        Grass:2,
+        Sand:3,
+        Rock:4,
+        DeepWater:5,
+        StillWater:6,
+        Water:7,
+        Waterfall:8,
+        WaterfallCrest:9,
+        TallGrass:10,
+        UndewaterGrass:11,
+        Ice:12,
+        Neutral:13,
+        SootGrass:14,
+        Bridge:15
+    },
+    tagName:function(tId){
+        var elValor = "None";
+        for (var prop in $PBField.terrainTags) {
+            if ($PBField.terrainTags.hasOwnProperty(prop)) {
+                if($PBField.terrainTags[prop]==tId){
+                    elValor=prop;
+                }
+            }
+        }
+        return elValor;
+    },
+    tagId:function(tName){
+        var elValor = 0;
+        if($PBField.terrainTags[tName]!=undefined){
+            elValor=$PBField.terrainTags[tName];
+        }
+        return elValor;
     }
 };
 
