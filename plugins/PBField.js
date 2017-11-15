@@ -469,3 +469,41 @@ Scene_Map.prototype.createMapNameWindow = function() {
     this._mapNameWindow = new PBWindowMapName();
     this.addChild(this._mapNameWindow);
 };
+
+
+//Terrain tag modifications
+//To be able to increase MV's default tileset terrainTag limit of 0-7 and effectively double the amount of 
+//available tags witout the need of exiting the program to set the terrain tags on the tiles, the stair setting of the 
+//tile doesn't perform its default fuctionality anymore. Instead, when set, the terrainTag applied to the tag will be 
+//increased by 8 on runtime, allowing the use of tags ranging 0-16. 
+//For example:
+//A tile has a terrain tag set of 0 and stair setting to off.   ->  The effective terrainTag will be 0.
+//A tile has a terrain tag set of 0 and stair setting to on.    ->  The effective terrainTag will be 8.
+//A tile has a terrain tag set of 3 and stair setting to off.   ->  The effective terrainTag will be 3.
+//A tile has a terrain tag set of 3 and stair setting to on.    ->  The effective terrainTag will be 11.
+
+Game_CharacterBase.prototype.isOnLadder = function() {
+    //We are never on a ladder
+    return false;
+};
+Game_Map.prototype.terrainTag = function(x, y) {
+    if (this.isValid(x, y)) {
+        var flags = this.tilesetFlags();
+        var tiles = this.layeredTiles(x, y);
+        for (var i = 0; i < tiles.length; i++) {
+            var tag = flags[tiles[i]] >> 12;
+            if (tag > 0) {
+                break;
+            }
+        }
+        //If ladder tile, increase tag by 8
+        var isLadder=this.isLadder(x, y);
+        if(isLadder){
+            return tag + 8;
+        }else{
+            return tag;
+        }
+    }
+    return 0;
+};
+
