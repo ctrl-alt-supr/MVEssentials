@@ -87,6 +87,7 @@
 * @text Player characters
 * @type struct<PlayerCharacterMeta>[]
 * @parent CatPlayerMeta 
+* @default ["{\"TrainerType\":\"1\",\"WalkingCharset\":\"img/characters/boy_walking\",\"CyclingCharset\":\"img/characters/boy_cycling\",\"SurfingCharset\":\"img/characters/boy_surfing\",\"RunningCharset\":\"img/characters/boy_running\",\"DivingCharset\":\"img/characters/boy_diving\",\"FishingCharset\":\"img/characters/boy_fishing\",\"FishingSurfingCharset\":\"img/characters/boy_fishingsurfing\"}"]
 *
 * @param Home
 * @text Home position
@@ -104,7 +105,8 @@ function PBTrainer() {
 }
 
 PBTrainer.playerMeta={
-    second:Number(parameters['secondLength'] || '1000'),
+    homeMapPos:JSON.parse(String(parameters['Home'] || '{"MapID":"1","X":"1","Y":"1"}')),
+    playableCharacters:JSON.parse(String(parameters['PlayableCharacters'] || '[{"TrainerType":"1","WalkingCharset":"boy_walking","CyclingCharset":"boy_cycling","SurfingCharset":"boy_surfing","RunningCharset":"boy_running","DivingCharset":"boy_diving","FishingCharset":"boy_fishing","FishingSurfingCharset":"boy_fishingsurfing"}]')),
 }
 
 //Shared container for overrided functions.

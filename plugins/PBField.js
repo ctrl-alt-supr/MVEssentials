@@ -473,14 +473,14 @@ Scene_Map.prototype.createMapNameWindow = function() {
 
 //Terrain tag modifications
 //To be able to increase MV's default tileset terrainTag limit of 0-7 and effectively double the amount of 
-//available tags witout the need of exiting the program to set the terrain tags on the tiles, the stair setting of the 
+//available tags witout the need of exiting the program to set the terrain tags on the tiles, the ladder setting of the 
 //tile doesn't perform its default fuctionality anymore. Instead, when set, the terrainTag applied to the tag will be 
 //increased by 8 on runtime, allowing the use of tags ranging 0-16. 
 //For example:
-//A tile has a terrain tag set of 0 and stair setting to off.   ->  The effective terrainTag will be 0.
-//A tile has a terrain tag set of 0 and stair setting to on.    ->  The effective terrainTag will be 8.
-//A tile has a terrain tag set of 3 and stair setting to off.   ->  The effective terrainTag will be 3.
-//A tile has a terrain tag set of 3 and stair setting to on.    ->  The effective terrainTag will be 11.
+//A tile has a terrain tag set of 0 and ladder setting to off.   ->  The effective terrainTag will be 0.
+//A tile has a terrain tag set of 0 and ladder setting to on.    ->  The effective terrainTag will be 8.
+//A tile has a terrain tag set of 3 and ladder setting to off.   ->  The effective terrainTag will be 3.
+//A tile has a terrain tag set of 3 and ladder setting to on.    ->  The effective terrainTag will be 11.
 
 Game_CharacterBase.prototype.isOnLadder = function() {
     //We are never on a ladder
