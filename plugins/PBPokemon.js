@@ -58,6 +58,7 @@ PBPokemon.prototype.level=function(){
 PBPokemon.prototype.setLevel=function(tLevel){
     this._level=tLevel;
     this._exp=PBExperience.getStartExperience(this._level,this.growthRate()) 
+    
 }
 
 PBPokemon.prototype.growthRate=function(){
@@ -193,6 +194,8 @@ PBPokemon.factory={
                 toRet[jsonProp]=elJSON[jsonProp];
             }
         }
+        toRet.setLevel(toRet._level);
+        toRet.calcStats();
         return toRet;
     }
 }

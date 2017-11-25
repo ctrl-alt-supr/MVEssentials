@@ -87,7 +87,7 @@
 * @text Player characters
 * @type struct<PlayerCharacterMeta>[]
 * @parent CatPlayerMeta 
-* @default ["{\"TrainerType\":\"1\",\"WalkingCharset\":\"img/characters/boy_walking\",\"CyclingCharset\":\"img/characters/boy_cycling\",\"SurfingCharset\":\"img/characters/boy_surfing\",\"RunningCharset\":\"img/characters/boy_running\",\"DivingCharset\":\"img/characters/boy_diving\",\"FishingCharset\":\"img/characters/boy_fishing\",\"FishingSurfingCharset\":\"img/characters/boy_fishingsurfing\"}"]
+* @default ["{\"TrainerType\":\"1\",\"WalkingCharset\":\"img/characters/$boy_walking\",\"CyclingCharset\":\"img/characters/$boy_cycling\",\"SurfingCharset\":\"img/characters/$boy_surfing\",\"RunningCharset\":\"img/characters/$boy_running\",\"DivingCharset\":\"img/characters/$boy_diving\",\"FishingCharset\":\"img/characters/$boy_fishing\",\"FishingSurfingCharset\":\"img/characters/$boy_fishingsurfing\"}"]
 *
 * @param Home
 * @text Home position
@@ -106,7 +106,7 @@ function PBTrainer() {
 
 PBTrainer.playerMeta={
     homeMapPos:JSON.parse(String(parameters['Home'] || '{"MapID":"1","X":"1","Y":"1"}')),
-    playableCharacters:JSON.parse(String(parameters['PlayableCharacters'] || '[{"TrainerType":"1","WalkingCharset":"boy_walking","CyclingCharset":"boy_cycling","SurfingCharset":"boy_surfing","RunningCharset":"boy_running","DivingCharset":"boy_diving","FishingCharset":"boy_fishing","FishingSurfingCharset":"boy_fishingsurfing"}]')),
+    playableCharacters:JSON.parse(String(parameters['PlayableCharacters'] || '[{"TrainerType":"1","WalkingCharset":"img/characters/$boy_walking","CyclingCharset":"img/characters/$boy_cycling","SurfingCharset":"img/characters/$boy_surfing","RunningCharset":"img/characters/$boy_running","DivingCharset":"img/characters/$boy_diving","FishingCharset":"img/characters/$boy_fishing","FishingSurfingCharset":"img/characters/$boy_fishingsurfing"}]')),
 }
 
 //Shared container for overrided functions.
@@ -268,8 +268,16 @@ PBTrainer.factory={
         return toRet;
     }
 }
-var setPlayerCharacter=function(playerCharacterId){
-    
+var playerCharacterIndex=function(){
+    return ($Trainer._playerCharacterIndex || 0);
+}
+var setPlayerCharacterIndex=function(playerCharacterIndex){
+    if(playerCharacterIndex<0||playerCharacterIndex>PBTrainer.playerMeta.playableCharacters.length-1){
+        return false;
+    }
+    var laMeta=JSON.parse(PBTrainer.playerMeta.playableCharacters[playerCharacterIndex]);
+    $Trainer._playerCharacterIndex=playerCharacterIndex;
+    $gamePlayer.setImage(laMeta.WalkingCharset.replace("img/characters/",""),0);
 }
 var askPlayerName=function(oldName){
     
@@ -281,9 +289,9 @@ var setupPlayer=function(playerCharacterId, name){
         is_player:true
     });
     if(playerCharacterId!=undefined && playerCharacterId!=null){
-        setPlayerCharacter(playerCharacterId);
+        setPlayerCharacterIndex(playerCharacterId);
     }else{
-        setPlayerCharacter(0);
+        setPlayerCharacterIndex(0);
     }
     if(name==undefined || name==null){
         askPlayerName();

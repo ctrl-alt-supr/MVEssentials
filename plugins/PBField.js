@@ -429,21 +429,23 @@ PBWindowMapName.prototype.updateFadeOut = function() {
 };
 
 PBWindowMapName.prototype.open = function() {
-    this.refresh();
-    if($PBField.mapNameWindow.AnimationType==0){
-        this._showCount = $PBField.mapNameWindow.ShowDuration;
-    }else if($PBField.mapNameWindow.AnimationType==1){
-        this._showCount = $PBField.mapNameWindow.ShowDuration;
-        this.x=0;
-        this.y=-1*this.height;
-    }else if($PBField.mapNameWindow.AnimationType==2){
-        this._showCount = $PBField.mapNameWindow.ShowDuration;
-        this.x=-1*this.width;
-        this.y=0;
-    }else if($PBField.mapNameWindow.AnimationType==3){
-        this._showCount = $PBField.mapNameWindow.ShowDuration;
-        this.opacity = 255;
-        this.contentsOpacity = 255;
+    if($gameMap.displayName() && $gameMap.displayName()!=""){
+        this.refresh();
+        if($PBField.mapNameWindow.AnimationType==0){
+            this._showCount = $PBField.mapNameWindow.ShowDuration;
+        }else if($PBField.mapNameWindow.AnimationType==1){
+            this._showCount = $PBField.mapNameWindow.ShowDuration;
+            this.x=0;
+            this.y=-1*this.height;
+        }else if($PBField.mapNameWindow.AnimationType==2){
+            this._showCount = $PBField.mapNameWindow.ShowDuration;
+            this.x=-1*this.width;
+            this.y=0;
+        }else if($PBField.mapNameWindow.AnimationType==3){
+            this._showCount = $PBField.mapNameWindow.ShowDuration;
+            this.opacity = 255;
+            this.contentsOpacity = 255;
+        }
     }
 };
 
