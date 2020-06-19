@@ -15,13 +15,13 @@
  * @text Direction from Map A
  * @desc Direction from Map A to Map B
  * @type select
- * @option North
+ * @option (↑) North
  * @value 8
- * @option South
+ * @option (↓) South
  * @value 2
- * @option East
+ * @option (→) East
  * @value 6
- * @option West
+ * @option (←) West
  * @value 4
  * 
  * @param TileA
@@ -39,14 +39,21 @@
  *
  * == To connect two maps: ==
  * - Add a new entry to the 'List of connections' parameter of this plugin whith:
- *      · Map A ID: Should contain the ID of one of the connected maps that are part of this connection.
- *      · Map B ID: Should contain the ID of the other connected map that is part of this connection.
+ *      · Map A ID: Should contain the ID of one of the connected maps that are 
+ *        part of this connection.
+ *      · Map B ID: Should contain the ID of the other connected map that is 
+ *        part of this connection.
  *      · Direction from Map A:
  *          · North (8)
  *          · South (2)
  *          · East  (6)
  *          · West  (4)
- *      · Tile in Map A: An integer that indicates the leftmost (North or south direction) or topmost (East or west direction) connected tile in Map A (1)
+ *      · Tile in Map A: An integer that indicates the leftmost (North or south 
+ *        direction) or topmost (East or west direction) connected tile in 
+ *        Map A (Default: 1)
+ * - NOTE: Only one entry for each pair of connections is required. For example 
+ *         (if you want to connect mapID 1 and mapID 2) only an entry with Map 
+ *         A 1 and Map B 2 (or the other way around) is required.
  * 
  * @param MapConnections
  * @text List of connections
@@ -79,6 +86,11 @@
  * @min 0
  * @default []
  * 
+ * @param NeigConnections
+ * @text Draw indirect connections
+ * @desc Paints maps connected to currently connected maps. May slow down execution. Recommended off when using big maps.
+ * @type boolean
+ * @default true
  * 
  */
 //-----------------------------------------------------------------------------
@@ -92,9 +104,14 @@ var finalJsonInfo=[];
 var alwaysScrollMaps = String(parameters['AllwaysScrollingMaps'] || '[]');
 var jsonAlwScrMaps=JSON.parse(alwaysScrollMaps);
 var useFakeStep = parameters['MakeStep']=="true";
+var drawNeigCons = parameters['NeigConnections']=="true";
 var fadeToUse = Number(parameters['FadeType'] || 2);
 cnInfoJson.forEach(function(each){
-    finalJsonInfo.push(JSON.parse(each));
+    var parsed=JSON.parse(each);
+    if(parsed.TileA==""){
+        parsed.TileA = 1;
+    }
+    finalJsonInfo.push(parsed);
 });
 
 
@@ -109,6 +126,7 @@ $ConnectedMaps = {
     outOfBoundsScrollMaps:jsonAlwScrMaps,
     fakeStep:useFakeStep,
     fadeType:fadeToUse,
+    neigCons:drawNeigCons,
     connectedDataMaps:{},
     dataMapCache:{},
 };
@@ -132,6 +150,43 @@ $ConnectedMaps.getConnectedMapsInfo=function(mapId){
     return infoRet;
 }
 
+$ConnectedMaps.getNeigConnectedMapsInfo=function(mapId){
+    if(!$ConnectedMaps.neigCons){
+        return [];
+    }
+    var infoRet=[];
+    infoRet=$ConnectedMaps.connections.filter(function(each){
+        return (each.MapA==String(mapId) || each.MapB==mapId);
+    });
+    var neigCons = [];
+    var neigIds=infoRet.map(function(each){
+        return each.MapA==mapId?each.MapB:each.MapA;
+    });
+    neigIds.forEach(function(neigId){
+        var neigConnections=$ConnectedMaps.getConnectedMapsInfo(neigId).filter(function(each){
+            var otherId = each.MapA==neigId?each.MapB:each.MapA;
+            return !(otherId == neigId || otherId == mapId);
+        });
+        neigConnections.forEach(function(nc){
+            if(neigCons.filter(function(ec){return ((ec.MapA == nc.MapA &&  ec.MapB == nc.MapB) || (ec.MapA == nc.MapB &&  ec.MapB == nc.MapA))}).length<=0){
+                neigCons.push(nc);
+            }
+        });
+    })
+    return neigCons;
+}
+$ConnectedMaps.getCombinedConnectedMapsInfo=function(mapId){
+    var direct=$ConnectedMaps.getConnectedMapsInfo(mapId);
+    var neig=$ConnectedMaps.getNeigConnectedMapsInfo(mapId);
+    var toRet = direct;
+    neig.forEach(function(each){
+        if((each.MapA != mapId) || (each.MapB != mapId)){
+            toRet.push(each);
+        }
+    });
+    return toRet;
+}
+
 
 $ConnectedMaps.loadMapData = function(mapId) {
     var oldConectedDataMaps=$ConnectedMaps.connectedDataMaps;
@@ -144,11 +199,27 @@ $ConnectedMaps.loadMapData = function(mapId) {
     if (mapId > 0) {
         this._mapId=mapId;
         var connectedMapInfos=$ConnectedMaps.getConnectedMapsInfo(mapId);
+        var connectedNeigMapInfos=$ConnectedMaps.getNeigConnectedMapsInfo(mapId);
         if(connectedMapInfos.length>0){
             var connectedMapIds=connectedMapInfos.map(function(each){
                 return each.MapA==mapId?each.MapB:each.MapA;
             });
-            connectedMapIds.forEach(function(each){
+            var connectedNeigMapIds = [];
+            connectedNeigMapInfos.forEach(function(each){
+                if(connectedNeigMapIds.indexOf(each.MapA)<0){
+                    connectedNeigMapIds.push(each.MapA);
+                }
+                if(connectedNeigMapIds.indexOf(each.MapB)<0){
+                    connectedNeigMapIds.push(each.MapB);
+                }
+            });
+            var combinedMapIds = connectedMapIds;
+            connectedNeigMapIds.forEach(function(each){
+                if(each!=mapId && combinedMapIds.indexOf(each)<0){
+                    combinedMapIds.push(each);
+                }
+            });
+            combinedMapIds.forEach(function(each){
                 if(Number(each)>0){
                     if($ConnectedMaps.dataMapCache["MAP_"+each]==undefined || $ConnectedMaps.dataMapCache["MAP_"+each]==null){
                         var filename = 'Map%1.json'.format(Number(each).padZero(3));
@@ -185,7 +256,19 @@ $ConnectedMaps.isMapLoaded = function() {
     var allOK=true;
     connectedMapInfos.forEach(function(each){
         if(allOK){
-            allOK=($ConnectedMaps.connectedDataMaps["MAP_"+each.MapA] || $ConnectedMaps.connectedDataMaps["MAP_"+each.MapB]);
+            allOK = ($ConnectedMaps.connectedDataMaps["MAP_"+each.MapA] || $ConnectedMaps.connectedDataMaps["MAP_"+each.MapB]);
+        }else{
+            return;
+        }
+    });
+    var connectedNeigMapInfos=$ConnectedMaps.getNeigConnectedMapsInfo(this._mapId);
+    connectedNeigMapInfos.forEach(function(each){
+        if(allOK){
+            if(each.MapA==this._mapId){
+                allOK = $ConnectedMaps.connectedDataMaps["MAP_"+each.MapB];
+            }else{
+                allOK = $ConnectedMaps.connectedDataMaps["MAP_"+each.MapA] 
+            }
         }else{
             return;
         }
@@ -534,6 +617,7 @@ Spriteset_Map.prototype.createConnectedTilemaps = function() {
     var connectedMapInfos=$ConnectedMaps.getConnectedMapsInfo($ConnectedMaps._mapId);
     var slf=this;
     var cont=0;
+    
     connectedMapInfos.forEach(function(cadaConnMapInfo){
         var laId=((cadaConnMapInfo.MapA==String($ConnectedMaps._mapId))?cadaConnMapInfo.MapB:cadaConnMapInfo.MapA);
         var newTileMap=null;
@@ -578,7 +662,63 @@ Spriteset_Map.prototype.createConnectedTilemaps = function() {
         slf.loadConnectedTileset(laId, cont);
         slf._baseSprite.addChild(newTileMap);
         cont+=1;
+        //We should also show the connections of this connection
+        if($ConnectedMaps.neigCons){
+            var connectedNeigMapInfos=$ConnectedMaps.getNeigConnectedMapsInfo($ConnectedMaps._mapId);
+            var connectionsToThisNeig=connectedNeigMapInfos.filter(function(ecn){
+                return ((ecn.MapA!=$ConnectedMaps._mapId && ecn.MapB!=$ConnectedMaps._mapId) && (ecn.MapA==laId || ecn.MapB==laId));
+            });
+            connectionsToThisNeig.forEach(function(cadaNeigConnMapInfo){
+                if((cadaNeigConnMapInfo.MapA == $ConnectedMaps._mapId && cadaNeigConnMapInfo.MapB == laId) || (cadaNeigConnMapInfo.MapB == $ConnectedMaps._mapId && cadaNeigConnMapInfo.MapA == laId)){
+                    return;
+                }
+                var laNeigId=((cadaNeigConnMapInfo.MapA==String(laId))?cadaNeigConnMapInfo.MapB:cadaNeigConnMapInfo.MapA);
+                var newNeigTileMap=null;
+                //Using ShaderTilemaps when more than a tileset is involved causes it to lag incredibly, so only Tilemap is used.
+                newNeigTileMap=new Tilemap();
+                //We set the original Y position of the connected tilemap based on the side its attached to and the tile offset
+                //If the side is North or South
+                if(cadaNeigConnMapInfo.Direction==2 && cadaNeigConnMapInfo.MapA==String(laId)){
+                    newNeigTileMap.originalX= newTileMap.originalX - (cadaNeigConnMapInfo.TileA -1);
+                    newNeigTileMap.originalY= newTileMap.originalY + (-1*$ConnectedMaps.connectedDataMaps["MAP_"+laId].height);
+                }else if(cadaNeigConnMapInfo.Direction==2 && cadaNeigConnMapInfo.MapB==String(laId)){
+                    newNeigTileMap.originalX= newTileMap.originalX + (cadaNeigConnMapInfo.TileA-1);
+                    newNeigTileMap.originalY= newTileMap.originalY + $ConnectedMaps.connectedDataMaps["MAP_"+laNeigId].height;
+                }else if(cadaNeigConnMapInfo.Direction==8 && cadaNeigConnMapInfo.MapA==String(laId)){
+                    newNeigTileMap.originalX= newTileMap.originalX - (cadaNeigConnMapInfo.TileA-1);
+                    newNeigTileMap.originalY= newTileMap.originalY + $ConnectedMaps.connectedDataMaps["MAP_"+laNeigId].height;
+                }else if(cadaNeigConnMapInfo.Direction==8 && cadaNeigConnMapInfo.MapB==String(laId)){
+                    newNeigTileMap.originalX= newTileMap.originalX + (cadaNeigConnMapInfo.TileA-1);
+                    newNeigTileMap.originalY= newTileMap.originalY + (-1*$ConnectedMaps.connectedDataMaps["MAP_"+laId].height);
+                }
+    
+                //If the side is East or West
+                if(cadaNeigConnMapInfo.Direction==4 && cadaNeigConnMapInfo.MapA==String(laId)){
+                    newNeigTileMap.originalX= newTileMap.originalX + $ConnectedMaps.connectedDataMaps["MAP_"+laNeigId].width;
+                    newNeigTileMap.originalY= newTileMap.originalY - (cadaNeigConnMapInfo.TileA-1);
+                }else if(cadaNeigConnMapInfo.Direction==4 && cadaNeigConnMapInfo.MapB==String(laId)){
+                    newNeigTileMap.originalX= newTileMap.originalX + (-1*$ConnectedMaps.connectedDataMaps["MAP_"+laId].width);
+                    newNeigTileMap.originalY= newTileMap.originalY + (cadaNeigConnMapInfo.TileA-1);
+                }else if(cadaNeigConnMapInfo.Direction==6 && cadaNeigConnMapInfo.MapA==String(laId)){
+                    newNeigTileMap.originalX= newTileMap.originalX + (-1*$ConnectedMaps.connectedDataMaps["MAP_"+laId].width);
+                    newNeigTileMap.originalY= newTileMap.originalY - (cadaNeigConnMapInfo.TileA-1);
+                }else if(cadaNeigConnMapInfo.Direction==6 && cadaNeigConnMapInfo.MapB==String(laId)){
+                    newNeigTileMap.originalX= newTileMap.originalX + $ConnectedMaps.connectedDataMaps["MAP_"+laNeigId].width;
+                    newNeigTileMap.originalY= newTileMap.originalY + (cadaNeigConnMapInfo.TileA-1);
+                }
+                slf._connectedTilemaps.push(newNeigTileMap);
+                newNeigTileMap.tileWidth = $gameMap.tileWidth();
+                newNeigTileMap.tileHeight = $gameMap.tileHeight();
+                newNeigTileMap.setData($ConnectedMaps.connectedDataMaps["MAP_"+laNeigId].width, $ConnectedMaps.connectedDataMaps["MAP_"+laNeigId].height, $ConnectedMaps.connectedDataMaps["MAP_"+laNeigId].data);
+                newNeigTileMap.horizontalWrap = ($ConnectedMaps.connectedDataMaps["MAP_"+laNeigId].scrollType === 2 ||$ConnectedMaps.connectedDataMaps["MAP_"+laNeigId] === 3);
+                newNeigTileMap.verticalWrap = ($ConnectedMaps.connectedDataMaps["MAP_"+laNeigId].scrollType === 1 || $ConnectedMaps.connectedDataMaps["MAP_"+laNeigId].scrollType === 3);
+                slf.loadConnectedTileset(laNeigId, cont);
+                slf._baseSprite.addChild(newNeigTileMap);
+                cont+=1;
+            });
+        }
     });
+    
 };
 Spriteset_Map.connectedTilesetCache={};
 Spriteset_Map.clearConnectedTilesetCache=function(){
